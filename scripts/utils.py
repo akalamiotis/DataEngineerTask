@@ -19,11 +19,12 @@ def get_data(api_url):
 
     try:
         response = session.get(api_url)
-        response.raise_for_status()
-    except (requests.exceptions.RequestException, requests.HTTPError) as e:
+        if response.status_code == 200:
+            return response
+        else:
+            raise RuntimeError(f"The API returned a status code {response.status_code}")
+    except requests.exceptions.RequestException as e:
         raise RuntimeError(f"Unable to connect to {api_url} with error: {e}")
-    else:
-        return response
 
 
 def save_data(data, output_dir=None):
